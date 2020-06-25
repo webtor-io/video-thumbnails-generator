@@ -79,7 +79,7 @@ func (s *Generator) getKey() string {
 	name := fmt.Sprintf("%v-%v-%v.%v", s.width, int(s.offset.Seconds()), int(s.length.Seconds()), s.format)
 	path := ""
 	if s.infoHash != "" && s.path != "" {
-		path = s.infoHash + s.path
+		path = s.infoHash + strings.Split(s.path, "~")[0]
 	} else {
 		h := md5.New()
 		io.WriteString(h, strings.Split(s.sourceURL, "?")[0])
