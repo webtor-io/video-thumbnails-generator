@@ -1,7 +1,5 @@
-FROM alpine:latest as certs
-
-# getting certs
-RUN apk update && apk upgrade && apk add --no-cache ca-certificates
+# ffmpeg image
+FROM jrottenberg/ffmpeg:4.0-alpine AS ffmpeg
 
 FROM golang:latest as build
 
@@ -23,13 +21,16 @@ ENV GOOS=linux
 # build the binary with debug information removed
 RUN go build -mod=vendor -ldflags '-w -s' -a -installsuffix cgo -o server
 
-FROM scratch
+FROM alpine:latest
+
+# copy static ffmpeg to use later 
+COPY --from=ffmpeg /usr/local /usr/local
+
+# install additional dependencies for ffmpeg
+RUN apk add --no-cache --update libgcc libstdc++ ca-certificates libcrypto1.1 libssl1.1 libgomp expat
 
 # copy our static linked library
 COPY --from=build /app/server .
-
-# copy certs
-COPY --from=certs /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/
 
 # tell we are exposing our service on port 8080, 8081
 EXPOSE 8080 8081
