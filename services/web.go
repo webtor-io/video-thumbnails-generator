@@ -5,6 +5,7 @@ import (
 	"io"
 	"net"
 	"net/http"
+	"net/url"
 	"path/filepath"
 	"strconv"
 	"strings"
@@ -115,6 +116,11 @@ func (s *Web) getWidth(r *http.Request) (int, error) {
 
 func (s *Web) getReader(r *http.Request) (io.Reader, error) {
 	sURL := s.getSourceURL(r)
+	parsedURL, err := url.Parse(sURL)
+	if err != nil {
+		return nil, errors.Wrapf(err, "Failed to parse url=%v", sURL)
+	}
+	sURL = parsedURL.String()
 	infoHash := s.getInfoHash(r)
 	path := s.getPath(r)
 	offset, err := s.getOffset(r)
