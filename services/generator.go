@@ -65,7 +65,8 @@ func (s *Generator) getParams() ([]string, error) {
 	} else {
 		params = append(params, "-t", strconv.Itoa(int(s.length.Seconds())))
 	}
-	vf := []string{"select=gt(scene\\,0.5)"}
+	// vf := []string{"select=gt(scene\\,0.5)"}
+	vf := []string{}
 	if s.width != 0 {
 		vf = append(vf, fmt.Sprintf("scale=%d:-1", s.width))
 	}
@@ -136,6 +137,9 @@ func (s *Generator) get() ([]byte, error) {
 		return nil, errors.Wrap(err, "Failed to get image")
 	}
 	b := stdoutBuf.Bytes()
+	if len(b) == 0 {
+		return nil, errors.New("No preview data")
+	}
 	err = s.s3.PutPreview(key, b)
 	if err != nil {
 		logrus.Warnf("Failed to put image to S3 key=%v", key)
