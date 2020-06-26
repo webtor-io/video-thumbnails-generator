@@ -70,7 +70,9 @@ func (s *Generator) getParams() ([]string, error) {
 	if s.width != 0 {
 		vf = append(vf, fmt.Sprintf("scale=%d:-1", s.width))
 	}
-	params = append(params, "-vf", strings.Join(vf, ","))
+	if len(vf) > 0 {
+		params = append(params, "-vf", strings.Join(vf, ","))
+	}
 	params = append(params, "-")
 	logrus.Infof("FFmpeg params %v", params)
 	return params, nil
