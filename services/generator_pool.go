@@ -30,11 +30,16 @@ func (s *GeneratorPool) Get(sourceURL string, offset time.Duration, format strin
 	t, tLoaded := s.timers.LoadOrStore(key, time.NewTimer(s.expire))
 	timer := t.(*time.Timer)
 	if !tLoaded {
-		go func() {
-			<-timer.C
+		if _, err := v.(*Generator).Get(); err != nil {
 			s.sm.Delete(key)
 			s.timers.Delete(key)
-		}()
+		} else {
+			go func() {
+				<-timer.C
+				s.sm.Delete(key)
+				s.timers.Delete(key)
+			}()
+		}
 	} else {
 		timer.Reset(s.expire)
 	}
