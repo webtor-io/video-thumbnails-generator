@@ -8,7 +8,6 @@ import (
 	"io/ioutil"
 	"os"
 	"os/exec"
-	"strconv"
 	"strings"
 	"sync"
 	"time"
@@ -21,12 +20,10 @@ import (
 // Generator generates previews for video content
 type Generator struct {
 	sourceURL string
-	format    string
 	offset    time.Duration
 	length    time.Duration
 	infoHash  string
 	path      string
-	width     int
 	inited    bool
 	b         []byte
 	err       error
@@ -35,9 +32,9 @@ type Generator struct {
 }
 
 // NewGenerator initializes new Generator instance
-func NewGenerator(s3 *S3Storage, sourceURL string, offset time.Duration, format string, width int, length time.Duration, infoHash string, path string) *Generator {
-	return &Generator{s3: s3, sourceURL: sourceURL, offset: offset, format: format, width: width,
-		length: length, infoHash: infoHash, path: path, inited: false}
+func NewGenerator(s3 *S3Storage, sourceURL string, offset time.Duration, length time.Duration, infoHash string, path string) *Generator {
+	return &Generator{s3: s3, sourceURL: sourceURL, offset: offset,
+		length: length, infoHash: infoHash, path: path}
 }
 
 // Using following links:
@@ -45,14 +42,8 @@ func NewGenerator(s3 *S3Storage, sourceURL string, offset time.Duration, format 
 // https://stackoverflow.com/questions/52303867/how-do-i-set-ffmpeg-pipe-output
 // https://www.bogotobogo.com/FFMpeg/ffmpeg_image_scaling_jpeg.php
 func (s *Generator) getParams() ([]string, error) {
-	var codec, format string
-	switch s.format {
-	case "webp":
-		codec = "libwebp"
-		format = "image2"
-	default:
-		return nil, errors.Errorf("Unsupported format type %v", s.format)
-	}
+	codec := "libwebp"
+	format := "image2"
 	params := []string{
 		"-ss", fmt.Sprintf("%d", int(s.offset.Seconds())),
 		"-i", s.sourceURL,
@@ -60,26 +51,26 @@ func (s *Generator) getParams() ([]string, error) {
 		"-c:v", codec,
 		"-f", format,
 	}
-	if s.length == 0 {
-		params = append(params, "-frames:v", "1")
-	} else {
-		params = append(params, "-t", strconv.Itoa(int(s.length.Seconds())))
-	}
+	// if s.length == 0 {
+	// 	params = append(params, "-frames:v", "1")
+	// } else {
+	// 	params = append(params, "-t", strconv.Itoa(int(s.length.Seconds())))
+	// }
 	// vf := []string{"select=gt(scene\\,0.5)"}
-	vf := []string{}
-	if s.width != 0 {
-		vf = append(vf, fmt.Sprintf("scale=%d:-1", s.width))
-	}
-	if len(vf) > 0 {
-		params = append(params, "-vf", strings.Join(vf, ","))
-	}
+	// vf := []string{}
+	// if s.width != 0 {
+	// 	vf = append(vf, fmt.Sprintf("scale=%d:-1", s.width))
+	// }
+	// if len(vf) > 0 {
+	// 	params = append(params, "-vf", strings.Join(vf, ","))
+	// }
 	params = append(params, "-")
 	logrus.Infof("FFmpeg params %v", params)
 	return params, nil
 }
 
 func (s *Generator) getKey() string {
-	name := fmt.Sprintf("%v-%v-%v.%v", s.width, int(s.offset.Seconds()), int(s.length.Seconds()), s.format)
+	name := fmt.Sprintf("%v-%v.%v", int(s.offset.Seconds()), int(s.length.Seconds()), "webp")
 	path := ""
 	if s.infoHash != "" && s.path != "" {
 		path = s.infoHash + strings.Split(s.path, "~")[0]

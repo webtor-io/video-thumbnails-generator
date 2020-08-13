@@ -6,9 +6,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
-	"path/filepath"
 	"strconv"
-	"strings"
 	"time"
 
 	logrusmiddleware "github.com/bakins/logrus-middleware"
@@ -95,25 +93,6 @@ func (s *Web) getLength(r *http.Request) (time.Duration, error) {
 	return time.Duration(i) * time.Second, nil
 }
 
-func (s *Web) getFormat(r *http.Request) (string, error) {
-	format := strings.TrimPrefix(filepath.Ext(r.URL.Path), ".")
-	if format == "" {
-		return "webp", nil
-	}
-	return format, nil
-}
-func (s *Web) getWidth(r *http.Request) (int, error) {
-	width := r.URL.Query().Get("width")
-	if width == "" {
-		return 0, nil
-	}
-	i, err := strconv.Atoi(width)
-	if err != nil {
-		return 0, errors.Wrapf(err, "Failed to parse width")
-	}
-	return i, nil
-}
-
 func (s *Web) getReader(r *http.Request) (io.Reader, error) {
 	sURL := s.getSourceURL(r)
 	parsedURL, err := url.Parse(sURL)
@@ -131,15 +110,7 @@ func (s *Web) getReader(r *http.Request) (io.Reader, error) {
 	if err != nil {
 		return nil, errors.Errorf("Failed to get length")
 	}
-	format, err := s.getFormat(r)
-	if err != nil {
-		return nil, errors.Errorf("Failed to get format")
-	}
-	width, err := s.getWidth(r)
-	if err != nil {
-		return nil, errors.Errorf("Failed to get width")
-	}
-	g := s.gp.Get(sURL, offset, format, width, length, infoHash, path)
+	g := s.gp.Get(sURL, offset, length, infoHash, path)
 	rr, err := g.Get()
 	if err != nil {
 		return nil, errors.Wrapf(err, "Failed to get reader")
