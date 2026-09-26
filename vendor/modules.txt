@@ -1,4 +1,4 @@
-# github.com/aws/aws-sdk-go v1.32.9
+# github.com/aws/aws-sdk-go v1.34.0
 ## explicit
 github.com/aws/aws-sdk-go/aws
 github.com/aws/aws-sdk-go/aws/arn
@@ -46,6 +46,8 @@ github.com/aws/aws-sdk-go/service/sts/stsiface
 # github.com/bakins/logrus-middleware v0.0.0-20180426214643-ce4c6f8deb07
 ## explicit
 github.com/bakins/logrus-middleware
+# github.com/bakins/test-helpers v0.0.0-20141028124846-af83df64dc31
+## explicit
 # github.com/cpuguy83/go-md2man/v2 v2.0.0
 ## explicit
 github.com/cpuguy83/go-md2man/v2/md2man
@@ -58,8 +60,6 @@ github.com/go-redis/redis/internal/hashtag
 github.com/go-redis/redis/internal/pool
 github.com/go-redis/redis/internal/proto
 github.com/go-redis/redis/internal/util
-# github.com/go-redis/redis/v7 v7.0.0-beta.4
-## explicit
 # github.com/golang/protobuf v1.3.1
 github.com/golang/protobuf/proto
 github.com/golang/protobuf/protoc-gen-go/descriptor
@@ -67,18 +67,16 @@ github.com/golang/protobuf/ptypes
 github.com/golang/protobuf/ptypes/any
 github.com/golang/protobuf/ptypes/duration
 github.com/golang/protobuf/ptypes/timestamp
-# github.com/jeffallen/seekinghttp v0.0.0-20171214161738-f41d11cb25b7
-## explicit
 # github.com/jmespath/go-jmespath v0.3.0
 github.com/jmespath/go-jmespath
 # github.com/joonix/log v0.0.0-20190524090622-13fe31bbdd7a
 ## explicit
 github.com/joonix/log
-# github.com/kolo/xmlrpc v0.0.0-20190909154602-56d5ec7c422e
-## explicit
 # github.com/konsorten/go-windows-terminal-sequences v1.0.3
 github.com/konsorten/go-windows-terminal-sequences
-# github.com/oz/osdb v0.0.0-20190204162748-da06ada9cdc1
+# github.com/onsi/ginkgo v1.8.0
+## explicit
+# github.com/onsi/gomega v1.5.0
 ## explicit
 # github.com/pkg/errors v0.9.1
 ## explicit
@@ -96,8 +94,6 @@ github.com/urfave/cli
 # github.com/webtor-io/common-services v0.0.0-20200624203531-dfc5c3497336
 ## explicit
 github.com/webtor-io/common-services
-# github.com/webtor-io/video-info v0.0.0-20200514173811-5429222630ec
-## explicit
 # golang.org/x/sys v0.0.0-20200622214017-ed371f2e16b4
 ## explicit
 golang.org/x/sys/internal/unsafeheader
